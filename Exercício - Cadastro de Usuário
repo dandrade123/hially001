@@ -1,0 +1,184 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_USERS 1000
+
+// Definição da estrutura para representar um usuário
+struct Usuario {
+    int id;
+    char nomeCompleto[50];
+    char email[50];
+    char sexo[15];
+    char endereco[100];
+    double altura;
+    int vacina;
+};
+
+// Declaração do vetor de usuários
+struct Usuario usuarios[MAX_USERS];
+
+// Contador de usuários cadastrados
+int contadorUsuarios = 0;
+
+// Função para gerar um ID único para o usuário
+int gerarId() {
+    return rand();
+}
+
+// Função para incluir um novo usuário
+void incluirUsuario() {
+    if (contadorUsuarios < MAX_USERS) {
+        struct Usuario novoUsuario;
+        novoUsuario.id = gerarId();
+
+        printf("Nome completo: ");
+        scanf(" %[^\n]", novoUsuario.nomeCompleto);
+
+        printf("Email: ");
+        scanf(" %s", novoUsuario.email);
+
+        // Validar o campo de email
+        if (strchr(novoUsuario.email, '@') == NULL) {
+            printf("Email inválido. Certifique-se de incluir '@'.\n");
+            return;
+        }
+
+        printf("Sexo (Feminino/Masculino/Indiferente): ");
+        scanf(" %s", novoUsuario.sexo);
+
+        // Validar o campo de sexo
+        if (strcmp(novoUsuario.sexo, "Feminino") != 0 &&
+            strcmp(novoUsuario.sexo, "Masculino") != 0 &&
+            strcmp(novoUsuario.sexo, "Indiferente") != 0) {
+            printf("Opção de sexo inválida. Escolha entre Feminino, Masculino ou Indiferente.\n");
+            return;
+        }
+
+        printf("Endereço: ");
+        scanf(" %[^\n]", novoUsuario.endereco);
+
+        printf("Altura (entre 1 e 2 metros): ");
+        scanf("%lf", &novoUsuario.altura);
+
+        // Validar o campo de altura
+        if (novoUsuario.altura < 1 || novoUsuario.altura > 2) {
+            printf("Altura inválida. Digite um valor entre 1 e 2 metros.\n");
+            return;
+        }
+
+        printf("Vacina (1 para sim, 0 para não): ");
+        scanf("%d", &novoUsuario.vacina);
+
+        // Adicionar o novo usuário ao vetor
+        usuarios[contadorUsuarios] = novoUsuario;
+        contadorUsuarios++;
+
+        printf("Usuário cadastrado com sucesso!\n");
+    } else {
+        printf("Limite de usuários atingido. Não é possível cadastrar mais usuários.\n");
+    }
+}
+
+// Função para editar um usuário pelo ID
+void editarUsuario() {
+    int idEditar;
+    printf("Digite o ID do usuário a ser editado: ");
+    scanf("%d", &idEditar);
+
+    int indiceUsuario = -1;
+    for (int i = 0; i < contadorUsuarios; i++) {
+        if (usuarios[i].id == idEditar) {
+            indiceUsuario = i;
+            break;
+        }
+    }
+
+    if (indiceUsuario != -1) {
+        printf("Digite as novas informações para o usuário:\n");
+
+        printf("Nome completo: ");
+        scanf(" %[^\n]", usuarios[indiceUsuario].nomeCompleto);
+
+        printf("Email: ");
+        scanf(" %s", usuarios[indiceUsuario].email);
+
+        // Validar o campo de email
+        if (strchr(usuarios[indiceUsuario].email, '@') == NULL) {
+            printf("Email inválido. Certifique-se de incluir '@'.\n");
+            return;
+        }
+
+        printf("Sexo (Feminino/Masculino/Indiferente): ");
+        scanf(" %s", usuarios[indiceUsuario].sexo);
+
+        // Validar o campo de sexo
+        if (strcmp(usuarios[indiceUsuario].sexo, "Feminino") != 0 &&
+            strcmp(usuarios[indiceUsuario].sexo, "Masculino") != 0 &&
+            strcmp(usuarios[indiceUsuario].sexo, "Indiferente") != 0) {
+            printf("Opção de sexo inválida. Escolha entre Feminino, Masculino ou Indiferente.\n");
+            return;
+        }
+
+        printf("Endereço: ");
+        scanf(" %[^\n]", usuarios[indiceUsuario].endereco);
+
+        printf("Altura (entre 1 e 2 metros): ");
+        scanf("%lf", &usuarios[indiceUsuario].altura);
+
+        // Validar o campo de altura
+        if (usuarios[indiceUsuario].altura < 1 || usuarios[indiceUsuario].altura > 2) {
+            printf("Altura inválida. Digite um valor entre 1 e 2 metros.\n");
+            return;
+        }
+
+        printf("Vacina (1 para sim, 0 para não): ");
+        scanf("%d", &usuarios[indiceUsuario].vacina);
+
+        printf("Usuário editado com sucesso!\n");
+    } else {
+        printf("Usuário não encontrado.\n");
+    }
+}
+
+// Função para excluir um usuário pelo ID
+void excluirUsuario() {
+    int idExcluir;
+    printf("Digite o ID do usuário a ser excluído: ");
+    scanf("%d", &idExcluir);
+
+    int indiceUsuario = -1;
+    for (int i = 0; i < contadorUsuarios; i++) {
+        if (usuarios[i].id == idExcluir) {
+            indiceUsuario = i;
+            break;
+        }
+    }
+
+    if (indiceUsuario != -1) {
+        // Remover o usuário do vetor movendo os usuários subsequentes para trás
+        for (int i = indiceUsuario; i < contadorUsuarios - 1; i++) {
+            usuarios[i] = usuarios[i + 1];
+        }
+
+        contadorUsuarios--;
+        printf("Usuário excluído com sucesso!\n");
+    } else {
+        printf("Usuário não encontrado.\n");
+    }
+}
+
+// Função para buscar um usuário pelo email
+void buscarUsuarioPorEmail() {
+    char emailBuscar[50];
+    printf("Digite o email do usuário a ser buscado: ");
+    scanf(" %s", emailBuscar);
+
+    for (int i = 0; i < contadorUsuarios; i++) {
+        if (strcmp(usuarios[i].email, emailBuscar) == 0) {
+            printf("Usuário encontrado:\n");
+            printf("ID: %d\n", usuarios[i].id);
+            printf("Nome: %s\n", usuarios[i].nomeCompleto);
+            printf("Email: %s\n", usuarios[i].email);
+            printf("Sexo: %s\n", usuarios[i].sexo);
+            printf("Endereço: %s\n
